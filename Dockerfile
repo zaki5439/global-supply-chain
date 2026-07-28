@@ -25,6 +25,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     php8.2-mbstring \
     php8.2-xml \
     php8.2-redis \
+    php8.2-mysql \
+    php8.2-sqlite3 \
     unzip \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && rm -rf /var/lib/apt/lists/*
