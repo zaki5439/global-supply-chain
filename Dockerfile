@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y \
     php8.2-mbstring \
     php8.2-xml \
     php8.2-redis \
+    unzip \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup PHP-FPM socket directory
@@ -37,6 +39,12 @@ RUN pip3 install --upgrade pip && pip3 install --no-cache-dir setuptools wheel &
 
 # Copy all application files
 COPY . .
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Set proper permissions for Laravel
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 # Copy configurations
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
