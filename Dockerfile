@@ -4,8 +4,10 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Update and install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get update && apt-get install -y \
     software-properties-common \
+    nodejs \
     curl \
     gettext-base \
     supervisor \
@@ -43,8 +45,11 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+# Install Node dependencies and build Vite assets
+RUN npm install && npm run build
+
 # Set proper permissions for Laravel
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache /app/public/build
 
 # Copy configurations
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
