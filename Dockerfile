@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     python3.10 \
     python3-pip \
     python3-venv \
+    build-essential libpq-dev python3-dev \
     && add-apt-repository ppa:ondrej/php -y \
     && apt-get update && apt-get install -y \
     php8.2-fpm \
@@ -32,7 +33,7 @@ WORKDIR /app
 
 # Copy python dependencies
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --upgrade pip && pip3 install --no-cache-dir setuptools wheel && pip3 install --no-cache-dir -r requirements.txt
 
 # Copy all application files
 COPY . .
