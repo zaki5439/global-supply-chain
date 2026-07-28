@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS=0;
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
 -- Server version:               8.4.3 - MySQL Community Server - GPL
@@ -15,9 +16,9 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
- Dumping database structure for supply_chain_risk
-IF NOT EXISTS `supply_chain_risk` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `supply_chain_risk`;
+-- Dumping database structure for supply_chain_risk
+
+
 
 -- Dumping structure for table supply_chain_risk.articles
 CREATE TABLE IF NOT EXISTS `articles` (
@@ -39,9 +40,7 @@ CREATE TABLE IF NOT EXISTS `articles` (
   KEY `articles_port_id_foreign` (`port_id`),
   KEY `articles_source_name_index` (`source_name`),
   KEY `articles_published_at_index` (`published_at`),
-  KEY `articles_sentiment_label_index` (`sentiment_label`),
-  CONSTRAINT `articles_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `articles_port_id_foreign` FOREIGN KEY (`port_id`) REFERENCES `ports` (`id`) ON DELETE SET NULL
+  KEY `articles_sentiment_label_index` (`sentiment_label`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table supply_chain_risk.articles: ~0 rows (approximately)
@@ -520,8 +519,7 @@ CREATE TABLE IF NOT EXISTS `ports` (
   UNIQUE KEY `ports_unlocode_unique` (`unlocode`),
   KEY `ports_country_id_foreign` (`country_id`),
   KEY `ports_name_index` (`name`),
-  KEY `ports_status_index` (`status`),
-  CONSTRAINT `ports_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON DELETE CASCADE
+  KEY `ports_status_index` (`status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=378 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table supply_chain_risk.ports: ~377 rows (approximately)
@@ -1079,8 +1077,7 @@ CREATE TABLE IF NOT EXISTS `watchlists` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `watchlists_user_id_watchable_type_watchable_id_unique` (`user_id`,`watchable_type`,`watchable_id`),
-  KEY `watchlists_watchable_type_watchable_id_index` (`watchable_type`,`watchable_id`),
-  CONSTRAINT `watchlists_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  KEY `watchlists_watchable_type_watchable_id_index` (`watchable_type`,`watchable_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Dumping data for table supply_chain_risk.watchlists: ~2 rows (approximately)
@@ -1093,3 +1090,5 @@ INSERT INTO `watchlists` (`id`, `user_id`, `watchable_type`, `watchable_id`, `no
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+
+
