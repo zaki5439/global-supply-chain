@@ -14,37 +14,20 @@ Karena semuanya ada di dalam 1 wadah, Anda **hanya perlu mendaftar ke 1 layanan 
 
 ---
 
-## TAHAP DEPLOYMENT (Langkah Anda)
+### Langkah 2: Deploy ke RENDER.COM (Sangat Direkomendasikan & Mudah)
+Render adalah platform cloud yang sangat mudah digunakan dan 100% gratis.
+1. Buka link ini di browser Anda: 👉 **[https://dashboard.render.com](https://dashboard.render.com)**
+2. Daftar atau *Login* menggunakan akun **GitHub** Anda.
+3. Setelah masuk ke *Dashboard*, klik tombol **"New +"** (di pojok kanan atas) lalu pilih **"Web Service"**.
+4. Pilih opsi **"Build and deploy from a Git repository"**.
+5. Klik tombol **Connect** di sebelah nama repositori Anda (`supply-chain-app`).
+6. Di halaman pengaturan, isi seperti ini:
+   - **Name:** Bebas (misal: `supply-chain-web`)
+   - **Environment:** Pilih **Docker** (Ini sangat penting! Jangan pilih Python/PHP).
+   - **Instance Type:** Pilih **Free** ($0/month).
+7. *Scroll* ke paling bawah dan klik tombol **Create Web Service**.
 
-### Langkah 1: Simpan ke GitHub
-Pastikan Anda sudah meng-*commit* dan *push* semua kode terbaru (termasuk file `Dockerfile`, `nginx.conf`, dan `supervisord.conf`) ke GitHub.
-```bash
-git add .
-git commit -m "Setup All-in-One Docker untuk Hosting"
-git push origin main
-```
-
-### Langkah 2: Deploy ke KOYEB (Sangat Direkomendasikan untuk Docker)
-Koyeb sangat bersahabat untuk Docker dan memberikan gratis 1 service.
-1. Buka [https://www.koyeb.com/](https://www.koyeb.com/) dan buat akun (bisa *Sign in with GitHub*).
-2. Di Dashboard, klik **Create Service**.
-3. Pilih **GitHub** dan hubungkan akun Anda.
-4. Pilih repositori `supply-chain-app`.
-5. Di bagian **Builder**, pilih **Dockerfile**. (Penting: Koyeb akan otomatis membaca `Dockerfile` yang baru kita buat).
-6. Di bagian **Regions**, pilih wilayah terdekat (misal: *Singapore* atau *Frankfurt*).
-7. Di bagian **Instance**, pastikan memilih opsi **Eco (Free)**.
-8. Di bagian **Exposed ports**, pastikan port diatur ke **80** (karena Nginx kita akan berjalan di port 80).
-9. Beri nama aplikasi Anda dan klik **Deploy**.
-
-*Koyeb akan mulai membangun OS Ubuntu Anda, menginstal semua komponen, dan menjalankan aplikasi. Proses ini mungkin memakan waktu 5-10 menit.*
-
-### Langkah 3 (Alternatif): Deploy ke RENDER
-Jika Anda tidak bisa menggunakan Koyeb, Anda bisa menggunakan Render:
-1. Buka [https://render.com](https://render.com) dan buat **New Web Service**.
-2. Pilih repo GitHub Anda.
-3. Di bagian **Environment**, pastikan Anda memilih **Docker**.
-4. Instance Type: **Free**.
-5. Klik **Create Web Service**.
+*Selesai! Render sekarang sedang menginstal Nginx, PHP, Python, dan Redis untuk Anda. Proses ini memakan waktu sekitar 5-10 menit. Setelah selesai, Anda bisa mengklik link URL yang diberikan Render di pojok kiri atas.*
 
 ---
 
