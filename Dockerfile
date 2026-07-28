@@ -59,6 +59,10 @@ if [ -z "$PORT" ]; then\n\
   export PORT=8080\n\
 fi\n\
 envsubst "\\$PORT" < /etc/nginx/sites-available/default > /tmp/nginx.conf && mv /tmp/nginx.conf /etc/nginx/sites-available/default\n\
+php artisan config:cache\n\
+php artisan route:cache\n\
+php artisan view:cache\n\
+php artisan migrate --force\n\
 exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
