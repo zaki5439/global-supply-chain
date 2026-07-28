@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Live Data - Supply Chain Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #0f3460 0%, #533483 100%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 20px 0;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 800;
+            color: white !important;
+            letter-spacing: 1px;
+        }
+
+        .navbar-text {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-size: 14px;
+        }
+
+        .container-main {
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            letter-spacing: 0.5px;
+        }
+
+        .status-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(233, 69, 96, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid #e94560;
+            color: #e94560;
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #e94560;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .controls-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, #e94560 0%, #d63649 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-refresh:active {
+            transform: translateY(0);
+        }
+
+        .auto-update-label {
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .update-badge {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #4caf50;
+            font-weight: 600;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-1) 0%, var(--color-2) 100%);
+        }
+
+        .data-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .data-card.weather {
+            --color-1: #667eea;
+            --color-2: #764ba2;
+        }
+
+        .data-card.exchange {
+            --color-1: #28a745;
+            --color-2: #20c997;
+        }
+
+        .data-card.ports {
+            --color-1: #fd7e14;
+            --color-2: #ff8c42;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .card-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: #999;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-value {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 15px 0;
+            background: linear-gradient(135deg, var(--color-1) 0%, var(--color-2) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .card-detail {
+            font-size: 14px;
+            color: #666;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .card-timestamp {
+            font-size: 11px;
+            color: #ccc;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loading-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--color-1);
+            border-radius: 50%;
+            animation: loading 1.4s infinite;
+        }
+
+        @keyframes loading {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin: 50px 0;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            height: 350px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin: 50px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .table-section h3 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .table-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-section th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: 700;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-section td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #666;
+        }
+
+        .table-section tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 50px;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .card-value {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div>
+                    <div class="navbar-brand">
+                        <i class="bi bi-lightning-fill"></i> REAL-TIME DATA
+                    </div>
+                    <div class="navbar-text">Global Supply Chain Intelligence Platform</div>
+                </div>
+                
+                <!-- Menu Navigation -->
+                <div class="navbar-nav ms-auto">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                        <a href="dashboard-new.html" class="nav-link" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.3s; background: rgba(255,255,255,0.1); font-size: 13px; font-weight: 600;">
+                            <i class="bi bi-speedometer2"></i> Risk Dashboard
+                        </a>
+                        <a href="dashboard-integrated.html" class="nav-link" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.3s; background: rgba(255,255,255,0.1); font-size: 13px; font-weight: 600;">
+                            <i class="bi bi-diagram-3"></i> Integrated Dashboard
+                        </a>
+                        <a href="dashboard-realtime.html" class="nav-link" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.3s; background: rgba(255,255,255,0.1); font-size: 13px; font-weight: 600;">
+                            <i class="bi bi-graph-up"></i> Basic Real-Time
+                        </a>
+                        <a href="realtime-data.html" class="nav-link active" style="color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; transition: all 0.3s; background: #e94560; font-size: 13px; font-weight: 600; border: 2px solid #e94560;">
+                            <i class="bi bi-lightning-charge"></i> Premium Live Data
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <style>
+        .nav-link:hover {
+            background: rgba(233, 69, 96, 0.3) !important;
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <!-- Main Container -->
+    <div class="container-main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Live Global Data Stream</h1>
+            <p>Real-time integration from weather, forex, and port monitoring APIs</p>
+            <div class="status-live">
+                <span class="status-dot"></span>
+                Streaming Live Data
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-section">
+            <button class="btn-refresh" onclick="refreshRealtimeData()">
+                <i class="bi bi-arrow-repeat"></i> Refresh Now
+            </button>
+            <div class="auto-update-label">
+                <span class="update-badge">✓ Auto-Updates</span>
+                Every 10 seconds with fresh data
+            </div>
+        </div>
+
+        <!-- Data Cards Grid -->
+        <div class="data-grid">
+            <!-- Weather Berlin -->
+            <div class="data-card weather">
+                <div class="card-icon">🌤️</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Weather - Berlin
+                </div>
+                <div class="card-value" id="tempBerlin">--°</div>
+                <div class="card-detail" id="weatherDetailBerlin">
+                    <strong>Humidity:</strong> --%<br>
+                    <strong>Wind Speed:</strong> -- km/h
+                </div>
+                <div class="card-timestamp" id="weatherUpdateBerlin">
+                    <i class="bi bi-clock"></i> Updated: --
+                </div>
+            </div>
+
+            <!-- Weather Singapore -->
+            <div class="data-card weather">
+                <div class="card-icon">🌴</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Weather - Singapore
+                </div>
+                <div class="card-value" id="tempSingapore">--°</div>
+                <div class="card-detail" id="weatherDetailSingapore">
+                    <strong>Humidity:</strong> --%<br>
+                    <strong>Wind Speed:</strong> -- km/h
+                </div>
+                <div class="card-timestamp" id="weatherUpdateSingapore">
+                    <i class="bi bi-clock"></i> Updated: --
+                </div>
+            </div>
+
+            <!-- Weather Beijing -->
+            <div class="data-card weather">
+                <div class="card-icon">🏙️</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Weather - Beijing
+                </div>
+                <div class="card-value" id="tempBeijing">--°</div>
+                <div class="card-detail" id="weatherDetailBeijing">
+                    <strong>Humidity:</strong> --%<br>
+                    <strong>Wind Speed:</strong> -- km/h
+                </div>
+                <div class="card-timestamp" id="weatherUpdateBeijing">
+                    <i class="bi bi-clock"></i> Updated: --
+                </div>
+            </div>
+
+            <!-- Exchange Rate EUR -->
+            <div class="data-card exchange">
+                <div class="card-icon">💱</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Exchange Rate EUR/USD
+                </div>
+                <div class="card-value" id="rateEUR">--</div>
+                <div class="card-detail" id="exchangeDetailEUR">
+                    1 USD = -- EUR<br>
+                    <strong>Real-time market rate</strong>
+                </div>
+                <div class="card-timestamp" id="exchangeUpdateEUR">
+                    <i class="bi bi-clock"></i> Updated: --
+                </div>
+            </div>
+
+            <!-- Exchange Rate SGD -->
+            <div class="data-card exchange">
+                <div class="card-icon">💱</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Exchange Rate SGD/USD
+                </div>
+                <div class="card-value" id="rateSGD">--</div>
+                <div class="card-detail" id="exchangeDetailSGD">
+                    1 USD = -- SGD<br>
+                    <strong>Real-time market rate</strong>
+                </div>
+                <div class="card-timestamp" id="exchangeUpdateSGD">
+                    <i class="bi bi-clock"></i> Updated: --
+                </div>
+            </div>
+
+            <!-- Exchange Rate JPY -->
+            <div class="data-card exchange">
+                <div class="card-icon">💱</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Exchange Rate JPY/USD
+                </div>
+                <div class="card-value" id="rateJPY">--</div>
+                <div class="card-detail" id="exchangeDetailJPY">
+                    1 USD = -- JPY<br>
+                    <strong>Real-time market rate</strong>
+                </div>
+                <div class="card-timestamp" id="exchangeUpdateJPY">
+                    <i class="bi bi-clock"></i> Updated: --
+                </div>
+            </div>
+
+            <!-- Ports Status -->
+            <div class="data-card ports">
+                <div class="card-icon">⚓</div>
+                <div class="card-label">
+                    <span class="loading-dot"></span> Major International Ports
+                </div>
+                <div class="card-value">6/6</div>
+                <div class="card-detail">
+                    <strong>Active Ports:</strong><br>
+                    Singapore • Shanghai • Hamburg<br>
+                    New York • Tokyo • Rotterdam
+                </div>
+                <div class="card-timestamp">
+                    <i class="bi bi-check-circle"></i> All Operational
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <canvas id="temperatureChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="exchangeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Exchange Rates Table -->
+        <div class="table-section">
+            <h3><i class="bi bi-table"></i> All Exchange Rates (USD Base)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Currency</th>
+                        <th>Rate vs USD</th>
+                        <th>Status</th>
+                        <th>Source</th>
+                    </tr>
+                </thead>
+                <tbody id="exchangeTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #999;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>📡 Connected to Live APIs | 🌍 Real-Time Global Data | ⏱️ Last update: <span id="footerTime">--:--:--</span></p>
+    </div>
+
+    <script>
+        let tempChart, exchangeChart;
+
+        function formatTime() {
+            return new Date().toLocaleTimeString();
+        }
+
+        async function refreshRealtimeData() {
+            try {
+                const response = await fetch('api-real-time.php?type=all');
+                const allData = await response.json();
+                
+                const now = formatTime();
+                document.getElementById('footerTime').textContent = now;
+
+                // WEATHER DATA
+                if (allData.weather) {
+                    const cities = ['Berlin', 'Singapore', 'Beijing'];
+                    const cityMap = { Berlin: 'Berlin', Singapore: 'Singapore', Beijing: 'Beijing' };
+
+                    cities.forEach(city => {
+                        const data = allData.weather[city];
+                        if (data && data.temperature !== undefined) {
+                            const lowerCity = city.toLowerCase();
+                            document.getElementById(`temp${city}`).textContent = data.temperature.toFixed(1) + '°';
+                            document.getElementById(`weatherDetail${city}`).innerHTML = 
+                                `<strong>Humidity:</strong> ${data.humidity}%<br><strong>Wind Speed:</strong> ${data.wind_speed.toFixed(1)} km/h`;
+                            document.getElementById(`weatherUpdate${city}`).innerHTML = 
+                                `<i class="bi bi-clock"></i> Updated: ${now}`;
+                        }
+                    });
+
+                    updateTemperatureChart(allData.weather);
+                }
+
+                // EXCHANGE RATES
+                if (allData.exchange && allData.exchange.rates) {
+                    const rates = allData.exchange.rates;
+                    const currencies = ['EUR', 'SGD', 'JPY'];
+
+                    currencies.forEach(curr => {
+                        if (rates[curr]) {
+                            document.getElementById(`rate${curr}`).textContent = rates[curr].toFixed(4);
+                            document.getElementById(`exchangeDetail${curr}`).innerHTML = 
+                                `1 USD = ${rates[curr].toFixed(4)} ${curr}<br><strong>Real-time market rate</strong>`;
+                            document.getElementById(`exchangeUpdate${curr}`).innerHTML = 
+                                `<i class="bi bi-clock"></i> Updated: ${now}`;
+                        }
+                    });
+
+                    updateExchangeChart(rates);
+                    updateExchangeTable(rates);
+                }
+
+            } catch (error) {
+                console.error('Error fetching real-time data:', error);
+            }
+        }
+
+        function updateTemperatureChart(weatherData) {
+            const ctx = document.getElementById('temperatureChart');
+            if (!ctx) return;
+
+            const cities = ['Berlin', 'Singapore', 'Beijing', 'New York', 'Tokyo'];
+            const temps = cities.map(city => weatherData[city]?.temperature || 0);
+
+            if (tempChart) tempChart.destroy();
+
+            tempChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: cities,
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: temps,
+                        backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { 
+                            display: true, 
+                            text: '📊 Real-Time Temperature by City', 
+                            font: { size: 16, weight: 700 },
+                            color: '#333'
+                        },
+                        legend: { display: false }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { color: '#666' } },
+                        x: { ticks: { color: '#666' } }
+                    }
+                }
+            });
+        }
+
+        function updateExchangeChart(rates) {
+            const ctx = document.getElementById('exchangeChart');
+            if (!ctx) return;
+
+            const currencies = ['EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'AUD'];
+            const values = currencies.map(curr => rates[curr] || 0);
+
+            if (exchangeChart) exchangeChart.destroy();
+
+            exchangeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: currencies,
+                    datasets: [{
+                        label: 'Exchange Rate (vs USD)',
+                        data: values,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#28a745',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { 
+                            display: true, 
+                            text: '📈 Exchange Rates vs USD', 
+                            font: { size: 16, weight: 700 },
+                            color: '#333'
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#666' } },
+                        x: { ticks: { color: '#666' } }
+                    }
+                }
+            });
+        }
+
+        function updateExchangeTable(rates) {
+            const topCurrencies = ['EUR', 'GBP', 'JPY', 'CNY', 'SGD', 'AUD', 'BRL', 'INR', 'CAD', 'CHF'];
+            let html = '';
+
+            for (const curr of topCurrencies) {
+                if (rates[curr]) {
+                    html += `
+                        <tr>
+                            <td><strong>${curr}</strong></td>
+                            <td>${rates[curr].toFixed(4)}</td>
+                            <td><span class="table-badge">✓ Live</span></td>
+                            <td>ExchangeRate API</td>
+                        </tr>
+                    `;
+                }
+            }
+
+            document.getElementById('exchangeTableBody').innerHTML = html;
+        }
+
+        // Initial load and auto-refresh
+        document.addEventListener('DOMContentLoaded', () => {
+            refreshRealtimeData();
+            setInterval(refreshRealtimeData, 10000);
+        });
+    </script>
+</body>
+</html>

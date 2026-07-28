@@ -1,0 +1,147 @@
+{
+  "continents": {
+    "Asia": {
+      "name": "Asia",
+      "region": "Eastern Hemisphere",
+      "countries": [
+        {"id": 1, "name": "Indonesia", "capital": "Jakarta", "population": 275501339, "area": 1904569, "gdp": 1055710000000, "currency": "IDR", "region": "Southeast Asia"},
+        {"id": 2, "name": "China", "capital": "Beijing", "population": 1425887337, "area": 9596961, "gdp": 17734185000000, "currency": "CNY", "region": "East Asia"},
+        {"id": 3, "name": "Japan", "capital": "Tokyo", "population": 123294513, "area": 377975, "gdp": 4230883000000, "currency": "JPY", "region": "East Asia"},
+        {"id": 4, "name": "India", "capital": "New Delhi", "population": 1417173173, "area": 3287263, "gdp": 3736882000000, "currency": "INR", "region": "South Asia"},
+        {"id": 5, "name": "Singapore", "capital": "Singapore", "population": 5917600, "area": 728, "gdp": 525986000000, "currency": "SGD", "region": "Southeast Asia"},
+        {"id": 6, "name": "South Korea", "capital": "Seoul", "population": 51780579, "area": 100210, "gdp": 1642383000000, "currency": "KRW", "region": "East Asia"},
+        {"id": 7, "name": "Thailand", "capital": "Bangkok", "population": 71801915, "area": 513120, "gdp": 504532000000, "currency": "THB", "region": "Southeast Asia"},
+        {"id": 8, "name": "Vietnam", "capital": "Hanoi", "population": 98186856, "area": 331212, "gdp": 430686000000, "currency": "VND", "region": "Southeast Asia"},
+        {"id": 9, "name": "Philippines", "capital": "Manila", "population": 120348448, "area": 343295, "gdp": 577341000000, "currency": "PHP", "region": "Southeast Asia"},
+        {"id": 10, "name": "Malaysia", "capital": "Kuala Lumpur", "population": 34215900, "area": 330803, "gdp": 527070000000, "currency": "MYR", "region": "Southeast Asia"},
+        {"id": 11, "name": "Pakistan", "capital": "Islamabad", "population": 240485658, "area": 796095, "gdp": 595201000000, "currency": "PKR", "region": "South Asia"},
+        {"id": 12, "name": "Bangladesh", "capital": "Dhaka", "population": 169356251, "area": 147570, "gdp": 416435000000, "currency": "BDT", "region": "South Asia"},
+        {"id": 13, "name": "Myanmar", "capital": "Naypyidaw", "population": 54804404, "area": 676578, "gdp": 101345000000, "currency": "MMK", "region": "Southeast Asia"},
+        {"id": 14, "name": "Cambodia", "capital": "Phnom Penh", "population": 17236062, "area": 181035, "gdp": 38234000000, "currency": "KHR", "region": "Southeast Asia"},
+        {"id": 15, "name": "Laos", "capital": "Vientiane", "population": 7529475, "area": 236800, "gdp": 20195000000, "currency": "LAK", "region": "Southeast Asia"},
+        {"id": 16, "name": "Sri Lanka", "capital": "Colombo", "population": 21893579, "area": 65610, "gdp": 84047000000, "currency": "LKR", "region": "South Asia"},
+        {"id": 17, "name": "Nepal", "capital": "Kathmandu", "population": 30034989, "area": 147516, "gdp": 45805000000, "currency": "NPR", "region": "South Asia"},
+        {"id": 18, "name": "Saudi Arabia", "capital": "Riyadh", "population": 36408820, "area": 2149690, "gdp": 833969000000, "currency": "SAR", "region": "Middle East"},
+        {"id": 19, "name": "United Arab Emirates", "capital": "Abu Dhabi", "population": 9890400, "area": 83600, "gdp": 521032000000, "currency": "AED", "region": "Middle East"},
+        {"id": 20, "name": "Turkey", "capital": "Ankara", "population": 85326000, "area": 783562, "gdp": 905049000000, "currency": "TRY", "region": "Middle East/Europe"}
+      ]
+    },
+    "Europe": {
+      "name": "Europe",
+      "region": "Northern Hemisphere",
+      "countries": [
+        {"id": 21, "name": "Germany", "capital": "Berlin", "population": 83369843, "area": 357022, "gdp": 4080208000000, "currency": "EUR", "region": "Western Europe"},
+        {"id": 22, "name": "United Kingdom", "capital": "London", "population": 67736802, "area": 242495, "gdp": 3332054000000, "currency": "GBP", "region": "Western Europe"},
+        {"id": 23, "name": "France", "capital": "Paris", "population": 68017430, "area": 643801, "gdp": 2780142000000, "currency": "EUR", "region": "Western Europe"},
+        {"id": 24, "name": "Italy", "capital": "Rome", "population": 58940570, "area": 301340, "gdp": 2010673000000, "currency": "EUR", "region": "Southern Europe"},
+        {"id": 25, "name": "Spain", "capital": "Madrid", "population": 47897000, "area": 505990, "gdp": 1428207000000, "currency": "EUR", "region": "Southern Europe"},
+        {"id": 26, "name": "Netherlands", "capital": "Amsterdam", "population": 17808592, "area": 41543, "gdp": 1275302000000, "currency": "EUR", "region": "Western Europe"},
+        {"id": 27, "name": "Switzerland", "capital": "Bern", "population": 8776000, "area": 41285, "gdp": 994767000000, "currency": "CHF", "region": "Western Europe"},
+        {"id": 28, "name": "Sweden", "capital": "Stockholm", "population": 10549347, "area": 450295, "gdp": 625430000000, "currency": "SEK", "region": "Northern Europe"},
+        {"id": 29, "name": "Poland", "capital": "Warsaw", "population": 37751221, "area": 312696, "gdp": 688254000000, "currency": "PLN", "region": "Central Europe"},
+        {"id": 30, "name": "Russia", "capital": "Moscow", "population": 144444359, "area": 17098246, "gdp": 2133188000000, "currency": "RUB", "region": "Eastern Europe"},
+        {"id": 31, "name": "Belgium", "capital": "Brussels", "population": 11590000, "area": 30528, "gdp": 595301000000, "currency": "EUR", "region": "Western Europe"},
+        {"id": 32, "name": "Austria", "capital": "Vienna", "population": 9042000, "area": 83859, "gdp": 516334000000, "currency": "EUR", "region": "Central Europe"},
+        {"id": 33, "name": "Greece", "capital": "Athens", "population": 10640000, "area": 131957, "gdp": 219343000000, "currency": "EUR", "region": "Southern Europe"},
+        {"id": 34, "name": "Portugal", "capital": "Lisbon", "population": 10426401, "area": 92090, "gdp": 262515000000, "currency": "EUR", "region": "Southern Europe"},
+        {"id": 35, "name": "Czech Republic", "capital": "Prague", "population": 10510785, "area": 78866, "gdp": 281635000000, "currency": "CZK", "region": "Central Europe"},
+        {"id": 36, "name": "Hungary", "capital": "Budapest", "population": 9689000, "area": 93028, "gdp": 219854000000, "currency": "HUF", "region": "Central Europe"},
+        {"id": 37, "name": "Romania", "capital": "Bucharest", "population": 18970000, "area": 238391, "gdp": 302432000000, "currency": "RON", "region": "Eastern Europe"},
+        {"id": 38, "name": "Bulgaria", "capital": "Sofia", "population": 6878000, "area": 110879, "gdp": 96289000000, "currency": "BGN", "region": "Eastern Europe"},
+        {"id": 39, "name": "Ireland", "capital": "Dublin", "population": 5127900, "area": 70273, "gdp": 529272000000, "currency": "EUR", "region": "Western Europe"},
+        {"id": 40, "name": "Denmark", "capital": "Copenhagen", "population": 5928000, "area": 43094, "gdp": 406654000000, "currency": "DKK", "region": "Northern Europe"}
+      ]
+    },
+    "Africa": {
+      "name": "Africa",
+      "region": "Sub-Saharan & Northern Africa",
+      "countries": [
+        {"id": 41, "name": "Nigeria", "capital": "Abuja", "population": 223804632, "area": 923768, "gdp": 477393000000, "currency": "NGN", "region": "West Africa"},
+        {"id": 42, "name": "Egypt", "capital": "Cairo", "population": 104888050, "area": 1002000, "gdp": 475619000000, "currency": "EGP", "region": "North Africa"},
+        {"id": 43, "name": "South Africa", "capital": "Pretoria", "population": 60142978, "area": 1221037, "gdp": 405017000000, "currency": "ZAR", "region": "Southern Africa"},
+        {"id": 44, "name": "Kenya", "capital": "Nairobi", "population": 54006387, "area": 580367, "gdp": 117606000000, "currency": "KES", "region": "East Africa"},
+        {"id": 45, "name": "Ethiopia", "capital": "Addis Ababa", "population": 120283026, "area": 1104300, "gdp": 162846000000, "currency": "ETB", "region": "East Africa"},
+        {"id": 46, "name": "Morocco", "capital": "Rabat", "population": 37602995, "area": 446550, "gdp": 143779000000, "currency": "MAD", "region": "North Africa"},
+        {"id": 47, "name": "Ghana", "capital": "Accra", "population": 34121096, "area": 238535, "gdp": 88191000000, "currency": "GHS", "region": "West Africa"},
+        {"id": 48, "name": "Tanzania", "capital": "Dar es Salaam", "population": 63588334, "area": 945087, "gdp": 90735000000, "currency": "TZS", "region": "East Africa"},
+        {"id": 49, "name": "Angola", "capital": "Luanda", "population": 36310164, "area": 1246700, "gdp": 117355000000, "currency": "AOA", "region": "Southern Africa"},
+        {"id": 50, "name": "Algeria", "capital": "Algiers", "population": 44903225, "area": 2381741, "gdp": 215074000000, "currency": "DZD", "region": "North Africa"},
+        {"id": 51, "name": "Uganda", "capital": "Kampala", "population": 48582220, "area": 241038, "gdp": 43618000000, "currency": "UGX", "region": "East Africa"},
+        {"id": 52, "name": "Sudan", "capital": "Khartoum", "population": 45657202, "area": 1861484, "gdp": 32652000000, "currency": "SDG", "region": "East Africa"},
+        {"id": 53, "name": "Cameroon", "capital": "Yaoundé", "population": 28500000, "area": 475442, "gdp": 43687000000, "currency": "XAF", "region": "Central Africa"},
+        {"id": 54, "name": "Ivory Coast", "capital": "Yamoussoukro", "population": 27480000, "area": 322463, "gdp": 69355000000, "currency": "XOF", "region": "West Africa"},
+        {"id": 55, "name": "Senegal", "capital": "Dakar", "population": 17863935, "area": 196722, "gdp": 28456000000, "currency": "XOF", "region": "West Africa"},
+        {"id": 56, "name": "Tunisia", "capital": "Tunis", "population": 12356117, "area": 163610, "gdp": 39540000000, "currency": "TND", "region": "North Africa"},
+        {"id": 57, "name": "Rwanda", "capital": "Kigali", "population": 13776698, "area": 26338, "gdp": 11852000000, "currency": "RWF", "region": "East Africa"},
+        {"id": 58, "name": "Zimbabwe", "capital": "Harare", "population": 15996622, "area": 390757, "gdp": 24627000000, "currency": "ZWL", "region": "Southern Africa"},
+        {"id": 59, "name": "Zambia", "capital": "Lusaka", "population": 19473125, "area": 752612, "gdp": 25609000000, "currency": "ZMW", "region": "Southern Africa"},
+        {"id": 60, "name": "Botswana", "capital": "Gaborone", "population": 2407564, "area": 581730, "gdp": 20948000000, "currency": "BWP", "region": "Southern Africa"}
+      ]
+    },
+    "Americas": {
+      "name": "Americas",
+      "region": "North & South America",
+      "countries": [
+        {"id": 61, "name": "United States", "capital": "Washington, D.C.", "population": 338288857, "area": 9833520, "gdp": 27359594000000, "currency": "USD", "region": "North America"},
+        {"id": 62, "name": "Brazil", "capital": "Brasília", "population": 215313498, "area": 8514877, "gdp": 1839758000000, "currency": "BRL", "region": "South America"},
+        {"id": 63, "name": "Mexico", "capital": "Mexico City", "population": 128932753, "area": 1964375, "gdp": 1292042000000, "currency": "MXN", "region": "North America"},
+        {"id": 64, "name": "Canada", "capital": "Ottawa", "population": 39566248, "area": 9984670, "gdp": 2117814000000, "currency": "CAD", "region": "North America"},
+        {"id": 65, "name": "Argentina", "capital": "Buenos Aires", "population": 46044703, "area": 2780400, "gdp": 632663000000, "currency": "ARS", "region": "South America"},
+        {"id": 66, "name": "Colombia", "capital": "Bogotá", "population": 51874024, "area": 1141748, "gdp": 330864000000, "currency": "COP", "region": "South America"},
+        {"id": 67, "name": "Chile", "capital": "Santiago", "population": 19119038, "area": 756096, "gdp": 301876000000, "currency": "CLP", "region": "South America"},
+        {"id": 68, "name": "Peru", "capital": "Lima", "population": 34352719, "area": 1285216, "gdp": 223765000000, "currency": "PEN", "region": "South America"},
+        {"id": 69, "name": "Venezuela", "capital": "Caracas", "population": 28435940, "area": 916445, "gdp": 77854000000, "currency": "VEF", "region": "South America"},
+        {"id": 70, "name": "Ecuador", "capital": "Quito", "population": 18190484, "area": 276841, "gdp": 106175000000, "currency": "USD", "region": "South America"},
+        {"id": 71, "name": "Bolivia", "capital": "La Paz", "population": 12224110, "area": 1098581, "gdp": 38877000000, "currency": "BOB", "region": "South America"},
+        {"id": 72, "name": "Paraguay", "capital": "Asunción", "population": 6657366, "area": 406752, "gdp": 39356000000, "currency": "PYG", "region": "South America"},
+        {"id": 73, "name": "Uruguay", "capital": "Montevideo", "population": 3426260, "area": 176215, "gdp": 64355000000, "currency": "UYU", "region": "South America"},
+        {"id": 74, "name": "Costa Rica", "capital": "San José", "population": 5180829, "area": 51100, "gdp": 67054000000, "currency": "CRC", "region": "Central America"},
+        {"id": 75, "name": "Panama", "capital": "Panama City", "population": 4408581, "area": 75420, "gdp": 76834000000, "currency": "PAB", "region": "Central America"},
+        {"id": 76, "name": "Guatemala", "capital": "Guatemala City", "population": 17608483, "area": 108889, "gdp": 84354000000, "currency": "GTQ", "region": "Central America"},
+        {"id": 77, "name": "Honduras", "capital": "Tegucigalpa", "population": 10406239, "area": 112090, "gdp": 32246000000, "currency": "HNL", "region": "Central America"},
+        {"id": 78, "name": "El Salvador", "capital": "San Salvador", "population": 6052064, "area": 21041, "gdp": 28767000000, "currency": "SVC", "region": "Central America"},
+        {"id": 79, "name": "Nicaragua", "capital": "Managua", "population": 7142529, "area": 130370, "gdp": 15287000000, "currency": "NIO", "region": "Central America"},
+        {"id": 80, "name": "Dominican Republic", "capital": "Santo Domingo", "population": 11117873, "area": 48442, "gdp": 95397000000, "currency": "DOP", "region": "Caribbean"}
+      ]
+    },
+    "Oceania": {
+      "name": "Oceania",
+      "region": "Pacific Region",
+      "countries": [
+        {"id": 81, "name": "Australia", "capital": "Canberra", "population": 26068792, "area": 7688287, "gdp": 1695504000000, "currency": "AUD", "region": "Australasia"},
+        {"id": 82, "name": "New Zealand", "capital": "Wellington", "population": 5228100, "area": 270467, "gdp": 240988000000, "currency": "NZD", "region": "Australasia"},
+        {"id": 83, "name": "Fiji", "capital": "Suva", "population": 896445, "area": 18274, "gdp": 4321000000, "currency": "FJD", "region": "Melanesia"},
+        {"id": 84, "name": "Samoa", "capital": "Apia", "population": 223636, "area": 2831, "gdp": 897000000, "currency": "WST", "region": "Polynesia"},
+        {"id": 85, "name": "Kiribati", "capital": "South Tarawa", "population": 135463, "area": 811, "gdp": 201000000, "currency": "AUD", "region": "Micronesia"},
+        {"id": 86, "name": "Marshall Islands", "capital": "Majuro", "population": 42050, "area": 181, "gdp": 228000000, "currency": "USD", "region": "Micronesia"},
+        {"id": 87, "name": "Palau", "capital": "Ngerulmud", "population": 18055, "area": 459, "gdp": 239000000, "currency": "USD", "region": "Micronesia"},
+        {"id": 88, "name": "Nauru", "capital": "Yaren", "population": 12668, "area": 21, "gdp": 150000000, "currency": "AUD", "region": "Micronesia"},
+        {"id": 89, "name": "Tuvalu", "capital": "Funafuti", "population": 11312, "area": 26, "gdp": 44000000, "currency": "AUD", "region": "Polynesia"},
+        {"id": 90, "name": "Solomon Islands", "capital": "Honiara", "population": 720199, "area": 28896, "gdp": 1516000000, "currency": "SBD", "region": "Melanesia"},
+        {"id": 91, "name": "Vanuatu", "capital": "Port Vila", "population": 307145, "area": 12189, "gdp": 956000000, "currency": "VUV", "region": "Melanesia"},
+        {"id": 92, "name": "Tonga", "capital": "Nuku'alofa", "population": 99210, "area": 747, "gdp": 539000000, "currency": "TOP", "region": "Polynesia"},
+        {"id": 93, "name": "Papua New Guinea", "capital": "Port Moresby", "population": 9612823, "area": 462840, "gdp": 37227000000, "currency": "PGK", "region": "Melanesia"},
+        {"id": 94, "name": "Micronesia", "capital": "Palikir", "population": 115239, "area": 702, "gdp": 367000000, "currency": "USD", "region": "Micronesia"},
+        {"id": 95, "name": "Timor-Leste", "capital": "Dili", "population": 1341296, "area": 14874, "gdp": 2165000000, "currency": "USD", "region": "Southeast Asia/Oceania"},
+        {"id": 96, "name": "Cook Islands", "capital": "Avarua", "population": 17379, "area": 236, "gdp": 423000000, "currency": "NZD", "region": "Polynesia"},
+        {"id": 97, "name": "Niue", "capital": "Alofi", "population": 1634, "area": 260, "gdp": 33000000, "currency": "NZD", "region": "Polynesia"},
+        {"id": 98, "name": "Samoa", "capital": "Apia", "population": 223636, "area": 2831, "gdp": 897000000, "currency": "WST", "region": "Polynesia"},
+        {"id": 99, "name": "Tokelau", "capital": "Fakaofo", "population": 1411, "area": 12, "gdp": 4000000, "currency": "NZD", "region": "Polynesia"},
+        {"id": 100, "name": "Wallis and Futuna", "capital": "Mata-Utu", "population": 11558, "area": 274, "gdp": 72000000, "currency": "XPF", "region": "Polynesia"}
+      ]
+    }
+  },
+  "summary": {
+    "total_countries": 100,
+    "total_population": 8097842000,
+    "total_gdp": 106891000000000,
+    "continents_count": 5,
+    "by_continent": {
+      "Asia": 20,
+      "Europe": 20,
+      "Africa": 20,
+      "Americas": 20,
+      "Oceania": 20
+    }
+  }
+}

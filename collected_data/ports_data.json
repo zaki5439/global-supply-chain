@@ -1,0 +1,38 @@
+{
+    "Singapore Port": {
+        "lat": 1.2655,
+        "lon": 103.8242,
+        "country": "Singapore",
+        "type": "major"
+    },
+    "Port of Shanghai": {
+        "lat": 30.9176,
+        "lon": 121.5885,
+        "country": "China",
+        "type": "major"
+    },
+    "Port of Hamburg": {
+        "lat": 53.5476,
+        "lon": 9.9158,
+        "country": "Germany",
+        "type": "major"
+    },
+    "Port of New York": {
+        "lat": 40.6892,
+        "lon": -74.0445,
+        "country": "USA",
+        "type": "major"
+    },
+    "Port of Tokyo": {
+        "lat": 35.4437,
+        "lon": 139.6452,
+        "country": "Japan",
+        "type": "major"
+    },
+    "Port of Rotterdam": {
+        "lat": 51.9289,
+        "lon": 4.2183,
+        "country": "Netherlands",
+        "type": "major"
+    }
+}

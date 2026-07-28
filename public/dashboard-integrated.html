@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Chain Risk Intelligence - Connected Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); 
+            min-height: 100vh; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar-custom { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+        
+        .api-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+        
+        .api-status.connected {
+            border-left: 4px solid #28a745;
+        }
+        
+        .api-status.disconnected {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.online {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.offline {
+            background: #dc3545;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .kpi-card { 
+            border-radius: 12px; 
+            padding: 30px; 
+            color: white; 
+            text-align: center; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+            margin-bottom: 20px; 
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .kpi-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+        }
+        
+        .kpi-value { 
+            font-size: 52px; 
+            font-weight: 700; 
+            margin: 15px 0; 
+            line-height: 1;
+        }
+        
+        .stat-card { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 24px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            margin-bottom: 16px; 
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover { 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12); 
+        }
+        
+        .stat-value { 
+            font-size: 36px; 
+            font-weight: 700; 
+            margin-bottom: 8px;
+        }
+        
+        .map-container { 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            margin-top: 30px; 
+            height: 450px;
+        }
+        
+        #portMap { 
+            width: 100%; 
+            height: 100%; 
+        }
+        
+        .main-content { 
+            padding: 30px; 
+        }
+        
+        .error-banner {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-banner.show {
+            display: block;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-overlay.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom">
+        <div class="container-fluid">
+            <span class="navbar-brand text-white" style="font-size: 24px; font-weight: 700;">
+                <i class="bi bi-globe"></i> Supply Chain Risk Intelligence
+            </span>
+            <span class="text-white small">Connected Dashboard - Real-time Backend Integration</span>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-content container-fluid">
+        <!-- Error Banner -->
+        <div class="error-banner" id="errorBanner">
+            <i class="bi bi-exclamation-triangle"></i> 
+            <span id="errorMessage"></span>
+        </div>
+        
+        <!-- Page Header -->
+        <h1 class="mb-4" style="color: #1a1d2e; font-weight: 700;">
+            <i class="bi bi-speedometer2"></i> Connected Risk Dashboard
+        </h1>
+        
+        <!-- KPI Cards -->
+        <div class="row mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div style="font-size: 14px; opacity: 0.9;"><i class="bi bi-exclamation-triangle"></i> Global Risk</div>
+                    <div class="kpi-value" id="globalRisk">--</div>
+                    <div id="riskStatus">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="kpi-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div style="font-size: 14px; opacity: 0.9;"><i class="bi bi-check-circle"></i> Low Risk</div>
+                    <div class="kpi-value" id="lowRiskCount">--</div>
+                    <div>Countries Safe</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="kpi-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                    <div style="font-size: 14px; opacity: 0.9;"><i class="bi bi-exclamation-circle"></i> Medium Risk</div>
+                    <div class="kpi-value" id="medRiskCount">--</div>
+                    <div>Monitor Closely</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3">
+                <div class="kpi-card" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                    <div style="font-size: 14px; opacity: 0.9;"><i class="bi bi-x-circle"></i> High Risk</div>
+                    <div class="kpi-value" id="highRiskCount">--</div>
+                    <div>Critical Alert</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Country Search -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-search"></i> Country Search</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="countrySearch" 
+                                class="form-control" 
+                                placeholder="Enter country name (e.g., Germany, Singapore, China)..."
+                                autocomplete="off"
+                            />
+                            <button class="btn btn-primary" type="button" id="searchBtn">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                            <button class="btn btn-secondary" type="button" id="clearBtn">
+                                <i class="bi bi-x"></i> Clear Cache
+                            </button>
+                        </div>
+                        <small class="text-muted mt-2" id="searchHint">💡 Try: Germany, Singapore, China, United States, Japan</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Country Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #667eea;" id="statGDP">--</div>
+                    <div style="color: #888; font-size: 14px; font-weight: 500;">GDP (USD)</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ffc107;" id="statInflation">--</div>
+                    <div style="color: #888; font-size: 14px; font-weight: 500;">Inflation Rate</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #28a745;" id="statPopulation">--</div>
+                    <div style="color: #888; font-size: 14px; font-weight: 500;">Population</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #764ba2;" id="statCurrency">--</div>
+                    <div style="color: #888; font-size: 14px; font-weight: 500;">Currency</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Risk Breakdown -->
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Risk Breakdown</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <small style="color: #666;">Weather Risk</small>
+                                <div style="font-size: 28px; font-weight: 700; color: #667eea; margin: 10px 0;" id="weatherRisk">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <small style="color: #666;">Inflation Risk</small>
+                                <div style="font-size: 28px; font-weight: 700; color: #ffc107; margin: 10px 0;" id="inflationRisk">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <small style="color: #666;">Currency Risk</small>
+                                <div style="font-size: 28px; font-weight: 700; color: #764ba2; margin: 10px 0;" id="currencyRisk">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <small style="color: #666;">News Sentiment Risk</small>
+                                <div style="font-size: 28px; font-weight: 700; color: #dc3545; margin: 10px 0;" id="newsRisk">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Map -->
+        <h2 class="mb-3" style="color: #1a1d2e; font-weight: 700;">
+            <i class="bi bi-map"></i> Global Port Monitoring
+        </h2>
+        <div class="map-container">
+            <div id="portMap"></div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center text-muted mt-5 pb-4">
+            <p><i class="bi bi-info-circle"></i> Real-time data from backend API | Last updated: <span id="lastUpdate">--</span></p>
+        </div>
+    </div>
+    
+    <!-- API Status Indicator -->
+    <div class="api-status" id="apiStatus">
+        <span class="status-indicator online"></span>
+        <span id="statusText">Connecting...</span>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="loading-spinner"></div>
+            <p class="mt-3" style="color: #666;">Loading country data...</p>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api-client.js"></script>
+    
+    <script>
+        // ============================================
+        // APPLICATION STATE
+        // ============================================
+        
+        const APP = {
+            currentCountry: null,
+            map: null,
+            currentMarker: null
+        };
+        
+        // ============================================
+        // UI HELPERS
+        // ============================================
+        
+        function showLoading(show = true) {
+            document.getElementById('loadingOverlay').classList.toggle('show', show);
+        }
+        
+        function showError(message) {
+            const banner = document.getElementById('errorBanner');
+            document.getElementById('errorMessage').textContent = message;
+            banner.classList.add('show');
+            setTimeout(() => banner.classList.remove('show'), 5000);
+        }
+        
+        function updateAPIStatus(connected) {
+            const status = document.getElementById('apiStatus');
+            const statusText = document.getElementById('statusText');
+            const indicator = status.querySelector('.status-indicator');
+            
+            if (connected) {
+                status.classList.remove('disconnected');
+                status.classList.add('connected');
+                indicator.classList.add('online');
+                indicator.classList.remove('offline');
+                statusText.textContent = '✓ Backend Connected';
+            } else {
+                status.classList.add('disconnected');
+                status.classList.remove('connected');
+                indicator.classList.remove('online');
+                indicator.classList.add('offline');
+                statusText.textContent = '✗ Backend Offline';
+            }
+        }
+        
+        function formatNumber(num) {
+            if (!num) return '--';
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num.toFixed(2);
+        }
+        
+        // ============================================
+        // INITIALIZE MAP
+        // ============================================
+        
+        function initializeMap() {
+            APP.map = L.map('portMap').setView([20, 0], 2);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(APP.map);
+        }
+        
+        function updateMapMarker(coordinates, riskScore) {
+            if (!APP.map || !coordinates) return;
+            
+            // Remove old marker
+            if (APP.currentMarker) {
+                APP.map.removeLayer(APP.currentMarker);
+            }
+            
+            // Get risk color
+            let color = '#28a745';
+            if (riskScore >= 60) color = '#dc3545';
+            else if (riskScore >= 30) color = '#ffc107';
+            
+            // Create marker
+            const icon = L.divIcon({
+                html: `
+                    <div style="
+                        background: ${color};
+                        color: white;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        font-size: 16px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    ">
+                        ${Math.round(riskScore)}
+                    </div>
+                `,
+                iconSize: [50, 50],
+                className: 'country-marker'
+            });
+            
+            APP.currentMarker = L.marker(coordinates, { icon }).addTo(APP.map);
+            APP.map.setView(coordinates, 4);
+        }
+        
+        // ============================================
+        // LOAD COUNTRY DATA
+        // ============================================
+        
+        async function loadCountryData(countryName) {
+            if (!countryName) {
+                showError('Please enter a country name');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                // Fetch all data
+                const data = await apiClient.getCountryDashboard(countryName);
+                const riskData = await apiClient.getCountryRisk(countryName);
+                
+                APP.currentCountry = countryName;
+                
+                // Update KPI cards
+                document.getElementById('globalRisk').textContent = Math.round(riskData.compositeScore);
+                
+                const riskStatus = document.getElementById('riskStatus');
+                if (riskData.riskLevel === 'LOW') {
+                    riskStatus.textContent = 'LOW RISK ✓';
+                    riskStatus.style.color = '#90EE90';
+                } else if (riskData.riskLevel === 'MEDIUM') {
+                    riskStatus.textContent = 'MEDIUM RISK ⚠';
+                    riskStatus.style.color = '#FFD700';
+                } else {
+                    riskStatus.textContent = 'HIGH RISK 🚨';
+                    riskStatus.style.color = '#FF6B6B';
+                }
+                
+                // Update stats
+                document.getElementById('statGDP').textContent = data.gdp ? formatNumber(data.gdp) : '--';
+                document.getElementById('statInflation').textContent = data.inflation ? data.inflation.toFixed(2) + '%' : '--';
+                document.getElementById('statPopulation').textContent = data.population ? formatNumber(data.population) : '--';
+                document.getElementById('statCurrency').textContent = data.currency || '--';
+                
+                // Update risk breakdown
+                document.getElementById('weatherRisk').textContent = riskData.weatherRisk ? Math.round(riskData.weatherRisk) : '--';
+                document.getElementById('inflationRisk').textContent = riskData.inflationRisk ? Math.round(riskData.inflationRisk) : '--';
+                document.getElementById('currencyRisk').textContent = riskData.currencyRisk ? Math.round(riskData.currencyRisk) : '--';
+                document.getElementById('newsRisk').textContent = riskData.newsRisk ? Math.round(riskData.newsRisk) : '--';
+                
+                // Update map
+                if (data.coordinates) {
+                    updateMapMarker(data.coordinates, riskData.compositeScore);
+                }
+                
+                // Update last update time
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                showError(`Failed to load data for ${countryName}: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const country = document.getElementById('countrySearch').value.trim();
+            if (country) {
+                loadCountryData(country);
+            }
+        });
+        
+        document.getElementById('countrySearch').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+        
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            apiClient.clearCache();
+            showError('Cache cleared successfully');
+        });
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        window.addEventListener('load', async () => {
+            // Initialize map
+            initializeMap();
+            
+            // Check backend connection
+            const health = await apiClient.checkHealth();
+            updateAPIStatus(health !== null);
+            
+            // Load sample country
+            if (health) {
+                loadCountryData('Germany');
+            } else {
+                showError('Backend service is not available. Please ensure FastAPI server is running on http://localhost:8000');
+            }
+        });
+    </script>
+</body>
+</html>

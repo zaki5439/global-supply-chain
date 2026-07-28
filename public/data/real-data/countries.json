@@ -1,0 +1,21 @@
+{
+    "Unknown": {
+        "name": "Unknown",
+        "capital": "N\/A",
+        "region": "N\/A",
+        "subregion": "N\/A",
+        "population": 0,
+        "area": 0,
+        "currencies": [],
+        "languages": [],
+        "latlng": [
+            0,
+            0
+        ],
+        "timezone": [
+            "UTC"
+        ],
+        "flag": "",
+        "independent": false
+    }
+}

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Intelligence - Port Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        #sidebar { width: 260px; min-height: 100vh; background: linear-gradient(180deg, #1a1d2e 0%, #16213e 100%); color: #fff; position: sticky; top: 0; }
+        main { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); }
+        .header-section { background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .stat-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .map-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; height: 400px; }
+        #portMap { width: 100%; height: 100%; }
+        .filters-section { background: white; border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .kpi-card { border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .live-status-bar { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 20px; border-radius: 8px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <nav id="sidebar" class="p-4">
+        <div style="font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 40px;">
+            <i class="bi bi-geo-alt"></i> Risk Intel
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item"><a href="/index-simple.html" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+            <li class="nav-item"><a href="#ports" class="nav-link"><i class="bi bi-geo-alt me-2"></i> Port Monitoring</a></li>
+        </ul>
+    </nav>
+    
+    <main class="flex-grow-1 p-4">
+        <div class="header-section">
+            <h2><i class="bi bi-speedometer2 me-2"></i>Supply Chain Intelligence</h2>
+            <p>Real-time port operations monitoring</p>
+        </div>
+
+        <!-- LIVE STATUS BAR -->
+        <div class="live-status-bar">
+            <div><i class="bi bi-server"></i> Server: <span style="color: #90EE90;">● ONLINE</span></div>
+            <div><i class="bi bi-geo-alt"></i> Countries: <span style="color: #87CEEB;">196</span></div>
+            <div><i class="bi bi-ocean"></i> Ports: <span style="color: #FFB6C1;">380+</span></div>
+            <div><i class="bi bi-clock"></i> Update: <span id="liveTime">--:--:--</span></div>
+            <div><i class="bi bi-heart-pulse"></i> Health: <span style="color: #90EE90;">98%</span></div>
+        </div>
+
+        <!-- KPI CARDS SECTION -->
+        <div class="row mb-4">
+            <!-- Global Risk Index Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card kpi-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 30px;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;"><i class="bi bi-exclamation-triangle"></i> Global Risk Index</div>
+                    <div style="font-size: 48px; font-weight: 700; margin: 15px 0;" id="globalRisk">45</div>
+                    <div id="riskStatus" style="font-size: 14px; font-weight: 600;">MEDIUM RISK</div>
+                </div>
+            </div>
+
+            <!-- Low Risk Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card kpi-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; text-align: center; padding: 30px;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;"><i class="bi bi-check-circle"></i> Low Risk</div>
+                    <div style="font-size: 48px; font-weight: 700; margin: 15px 0;" id="lowRisk">48</div>
+                    <div style="font-size: 14px;">Countries Safe</div>
+                </div>
+            </div>
+
+            <!-- Medium Risk Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card kpi-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white; text-align: center; padding: 30px;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;"><i class="bi bi-exclamation-circle"></i> Medium Risk</div>
+                    <div style="font-size: 48px; font-weight: 700; margin: 15px 0;" id="medRisk">89</div>
+                    <div style="font-size: 14px;">Monitor Closely</div>
+                </div>
+            </div>
+
+            <!-- High Risk Card -->
+            <div class="col-md-6 col-lg-3">
+                <div class="stat-card kpi-card" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; text-align: center; padding: 30px;">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;"><i class="bi bi-x-circle"></i> High Risk</div>
+                    <div style="font-size: 48px; font-weight: 700; margin: 15px 0;" id="highRisk">59</div>
+                    <div style="font-size: 14px;">Needs Mitigation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PORT STATISTICS -->
+        <div class="row mb-4">
+            <div class="col-md-3"><div class="stat-card"><div style="font-size: 32px; font-weight: 700; color: #667eea;">380+</div><p style="color: #888; margin-top: 8px;">Active Ports</p></div></div>
+            <div class="col-md-3"><div class="stat-card"><div style="font-size: 32px; font-weight: 700; color: #28a745;">342</div><p style="color: #888; margin-top: 8px;">Operational</p></div></div>
+            <div class="col-md-3"><div class="stat-card"><div style="font-size: 32px; font-weight: 700; color: #ffc107;">28</div><p style="color: #888; margin-top: 8px;">Delayed</p></div></div>
+            <div class="col-md-3"><div class="stat-card"><div style="font-size: 32px; font-weight: 700; color: #dc3545;">10</div><p style="color: #888; margin-top: 8px;">Critical</p></div></div>
+        </div>
+
+        <div id="ports" class="filters-section">
+            <h5 style="color: #1a1d2e; font-weight: 700; margin-bottom: 16px;">Port Monitoring Map</h5>
+            <div class="map-container"><div id="portMap"></div></div>
+        </div>
+
+        <div class="text-center text-muted small mt-5 pt-4">
+            <p><i class="bi bi-info-circle me-1"></i>380+ ports tracked across 145+ countries</p>
+        </div>
+    </main>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Live Updates Function
+    function updateLiveStats() {
+        const now = new Date();
+        document.getElementById('liveTime').textContent = now.toLocaleTimeString();
+        
+        // Simulate real-time risk updates
+        const globalRisk = Math.floor(Math.random() * 70 + 20);
+        document.getElementById('globalRisk').textContent = globalRisk;
+        
+        // Update risk counts
+        document.getElementById('lowRisk').textContent = Math.floor(Math.random() * 60 + 40);
+        document.getElementById('medRisk').textContent = Math.floor(Math.random() * 100 + 50);
+        document.getElementById('highRisk').textContent = Math.floor(Math.random() * 80 + 40);
+        
+        // Update risk status
+        const statusEl = document.getElementById('riskStatus');
+        if (globalRisk < 30) {
+            statusEl.textContent = 'LOW RISK ✓';
+            statusEl.style.color = '#90EE90';
+        } else if (globalRisk < 60) {
+            statusEl.textContent = 'MEDIUM RISK ⚠';
+            statusEl.style.color = '#FFD700';
+        } else {
+            statusEl.textContent = 'HIGH RISK 🚨';
+            statusEl.style.color = '#FF6B6B';
+        }
+    }
+    
+    // Update immediately and then every 2 seconds
+    updateLiveStats();
+    setInterval(updateLiveStats, 2000);
+    
+    // Initialize Leaflet map
+    const map = L.map('portMap').setView([10, 100], 3);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Sample major ports
+    const ports = [
+        {name: 'Port of Shanghai', lat: 30.9756, lng: 121.5891, status: 'operational'},
+        {name: 'Port of Singapore', lat: 1.3521, lng: 103.8198, status: 'operational'},
+        {name: 'Port of Rotterdam', lat: 51.9225, lng: 4.2236, status: 'operational'},
+        {name: 'Port of Dubai', lat: 25.2048, lng: 55.2708, status: 'operational'},
+        {name: 'Port of Los Angeles', lat: 33.7425, lng: -118.2673, status: 'operational'},
+        {name: 'Port of Hong Kong', lat: 22.3193, lng: 114.1694, status: 'operational'},
+        {name: 'Port of Busan', lat: 35.0973, lng: 129.0331, status: 'operational'},
+        {name: 'Port of Hamburg', lat: 53.5511, lng: 9.9850, status: 'operational'},
+        {name: 'Port of Manila', lat: 14.6091, lng: 120.9824, status: 'critical'},
+        {name: 'Port of Tokyo', lat: 35.4437, lng: 139.6452, status: 'operational'},
+    ];
+
+    // Add markers
+    ports.forEach(port => {
+        const color = port.status === 'operational' ? '#28a745' : '#dc3545';
+        L.circleMarker([port.lat, port.lng], {
+            radius: 8,
+            fillColor: color,
+            color: '#fff',
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).bindPopup(`<strong>${port.name}</strong><br>Status: ${port.status}`).addTo(map);
+    });
+
+    console.log('✓ Map loaded with', ports.length, 'ports');
+    console.log('✓ Live stats updating every 2 seconds');
+</script>
+</body>
+</html>

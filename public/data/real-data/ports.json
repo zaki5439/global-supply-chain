@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Port of Shanghai",
+        "lat": 30.9176,
+        "lng": 121.5885,
+        "country": "China",
+        "type": "major"
+    },
+    {
+        "name": "Port of Singapore",
+        "lat": 1.2655,
+        "lng": 103.8242,
+        "country": "Singapore",
+        "type": "major"
+    },
+    {
+        "name": "Port of Rotterdam",
+        "lat": 51.9289,
+        "lng": 4.2183,
+        "country": "Netherlands",
+        "type": "major"
+    },
+    {
+        "name": "Port of Hamburg",
+        "lat": 53.5476,
+        "lng": 9.9158,
+        "country": "Germany",
+        "type": "major"
+    },
+    {
+        "name": "Port of Los Angeles",
+        "lat": 33.7425,
+        "lng": -118.2673,
+        "country": "USA",
+        "type": "major"
+    },
+    {
+        "name": "Port of Long Beach",
+        "lat": 33.7455,
+        "lng": -118.2154,
+        "country": "USA",
+        "type": "major"
+    },
+    {
+        "name": "Port of Hong Kong",
+        "lat": 22.3193,
+        "lng": 114.1694,
+        "country": "Hong Kong",
+        "type": "major"
+    },
+    {
+        "name": "Port of Busan",
+        "lat": 35.0973,
+        "lng": 129.0331,
+        "country": "South Korea",
+        "type": "major"
+    },
+    {
+        "name": "Port of Dubai",
+        "lat": 25.2048,
+        "lng": 55.2708,
+        "country": "UAE",
+        "type": "major"
+    },
+    {
+        "name": "Port of Antwerp",
+        "lat": 51.3369,
+        "lng": 4.2408,
+        "country": "Belgium",
+        "type": "major"
+    }
+]

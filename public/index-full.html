@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Intelligence - Port Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        #sidebar { width: 260px; min-height: 100vh; background: linear-gradient(180deg, #1a1d2e 0%, #16213e 100%); color: #fff; box-shadow: 4px 0 15px rgba(0,0,0,0.3); position: sticky; top: 0; }
+        #sidebar .logo { font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: flex; align-items: center; gap: 8px; margin-bottom: 40px; }
+        #sidebar .nav-link { color: #adb5bd; border-radius: 8px; margin-bottom: 8px; padding: 12px 16px !important; transition: all 0.3s ease; border-left: 3px solid transparent; font-weight: 500; }
+        #sidebar .nav-link:hover, #sidebar .nav-link.active { background: rgba(102, 126, 234, 0.15); color: #667eea; border-left-color: #667eea; }
+        main { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); }
+        .header-section { background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .header-section h2 { color: #1a1d2e; font-weight: 700; font-size: 28px; margin: 0 0 8px 0; }
+        .header-section p { color: #666; margin: 0; font-size: 14px; }
+        .stat-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .stat-value { font-size: 32px; font-weight: 700; color: #667eea; }
+        .map-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 24px; height: 400px; }
+        #portMap { width: 100%; height: 100%; }
+        .filters-section { background: white; border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .filters-section select, .filters-section input { border: 2px solid rgba(102,126,234,0.2) !important; border-radius: 8px; padding: 10px 12px !important; }
+        .port-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+        .port-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.12); transform: translateY(-2px); }
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .status-operational { background: rgba(40, 167, 69, 0.15); color: #28a745; }
+        .status-delayed { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+        .status-critical { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <nav id="sidebar" class="p-4">
+        <div class="logo">
+            <i class="bi bi-geo-alt"></i>
+            <span>Risk Intel</span>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#ports" class="nav-link">
+                    <i class="bi bi-geo-alt me-2"></i> Port Monitoring
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <main class="flex-grow-1 p-4">
+        <div class="header-section">
+            <h2><i class="bi bi-geo-alt me-2"></i>Port Monitoring</h2>
+            <p>Real-time port operations and congestion tracking</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value">380+</div>
+                    <div style="color: #888; margin-top: 8px;">Active Ports</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #28a745;">342</div>
+                    <div style="color: #888; margin-top: 8px;">Operational</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ffc107;">28</div>
+                    <div style="color: #888; margin-top: 8px;">Delayed</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #dc3545;">10</div>
+                    <div style="color: #888; margin-top: 8px;">Critical</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="row g-2 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600;">Filter by Country</label>
+                    <select id="countryFilter" class="form-select" style="font-size: 14px;">
+                        <option value="">All Countries</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600;">Filter by Region</label>
+                    <select id="regionFilter" class="form-select" style="font-size: 14px;">
+                        <option value="">All Regions</option>
+                        <option value="East Asia">East Asia</option>
+                        <option value="Southeast Asia">Southeast Asia</option>
+                        <option value="South Asia">South Asia</option>
+                        <option value="Middle East">Middle East</option>
+                        <option value="Europe">Europe</option>
+                        <option value="North America">North America</option>
+                        <option value="South America">South America</option>
+                        <option value="Africa">Africa</option>
+                        <option value="Oceania">Oceania</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600;">Search Port</label>
+                    <input type="text" id="searchPort" class="form-control" placeholder="Search by port name..." style="font-size: 14px;">
+                </div>
+                <div class="col-md-2" style="display: flex; align-items: flex-end;">
+                    <button id="toggleRoutesBtn" class="btn btn-sm btn-outline-primary" style="width: 100%; font-size: 12px;">
+                        <i class="bi bi-diagram-3 me-1"></i>Show Routes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="portMap"></div>
+        </div>
+
+        <h4 style="color: #1a1d2e; font-weight: 700; margin-bottom: 16px;">
+            <i class="bi bi-list-ul me-2" style="color: #667eea;"></i>Major Ports Status
+        </h4>
+        <div id="portsList"></div>
+
+        <div class="mt-5 pt-4 border-top text-center text-muted small">
+            <p><i class="bi bi-info-circle me-1"></i>Port data updated every 15 minutes</p>
+            <p class="mb-0">Last updated: <strong id="lastUpdated">--</strong></p>
+        </div>
+    </main>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let ports = [];
+    let map;
+    let markers = [];
+    let shippingRoutesVisible = false;
+    let shippingRoutePolylines = [];
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeMap();
+        loadPortsData();
+        setupFilters();
+    });
+
+    function initializeMap() {
+        map = L.map('portMap').setView([10, 100], 3);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+    }
+
+    function loadPortsData() {
+        fetch('./ports-complete.json')
+            .then(response => response.json())
+            .then(data => {
+                ports = data;
+                console.log(`Loaded ${ports.length} ports`);
+                displayPorts(ports);
+                updateCountryDropdown();
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+            })
+            .catch(error => {
+                console.error('Error loading ports:', error);
+                // Fallback to sample ports
+                ports = [
+                    {name: 'Port of Shanghai', country: 'China', region: 'East Asia', lat: 30.9756, lng: 121.5891, status: 'operational', containers: 4200, ships: 45, congestion: 12, activity: 'Worlds busiest'},
+                    {name: 'Port of Singapore', country: 'Singapore', region: 'Southeast Asia', lat: 1.3521, lng: 103.8198, status: 'operational', containers: 3800, ships: 52, congestion: 8, activity: 'Transshipment hub'},
+                    {name: 'Port of Rotterdam', country: 'Netherlands', region: 'Europe', lat: 51.9225, lng: 4.2236, status: 'operational', containers: 2700, ships: 35, congestion: 15, activity: 'Europe gateway'},
+                    {name: 'Port of Dubai', country: 'UAE', region: 'Middle East', lat: 25.2048, lng: 55.2708, status: 'operational', containers: 3500, ships: 42, congestion: 15, activity: 'Largest manmade'},
+                    {name: 'Port of Los Angeles', country: 'USA', region: 'North America', lat: 33.7425, lng: -118.2673, status: 'operational', containers: 4500, ships: 48, congestion: 22, activity: 'US busiest'},
+                    {name: 'Port of Hong Kong', country: 'Hong Kong', region: 'East Asia', lat: 22.3193, lng: 114.1694, status: 'operational', containers: 2800, ships: 38, congestion: 18, activity: 'Transshipment'},
+                    {name: 'Port of Busan', country: 'South Korea', region: 'East Asia', lat: 35.0973, lng: 129.0331, status: 'operational', containers: 2100, ships: 32, congestion: 19, activity: 'Container port'},
+                    {name: 'Port of Hamburg', country: 'Germany', region: 'Europe', lat: 53.5511, lng: 9.9850, status: 'operational', containers: 3600, ships: 42, congestion: 14, activity: 'Germany busiest'},
+                    {name: 'Port of Manila', country: 'Philippines', region: 'Southeast Asia', lat: 14.6091, lng: 120.9824, status: 'critical', containers: 1100, ships: 20, congestion: 72, activity: 'Typhoon recovery'},
+                    {name: 'Port of Tokyo', country: 'Japan', region: 'East Asia', lat: 35.4437, lng: 139.6452, status: 'operational', containers: 1900, ships: 28, congestion: 16, activity: 'Japan major'},
+                ];
+                displayPorts(ports);
+                updateCountryDropdown();
+            });
+    }
+
+    function displayPorts(filteredPorts) {
+        addMarkersToMap(filteredPorts);
+        
+        const portsList = document.getElementById('portsList');
+        if (filteredPorts.length === 0) {
+            portsList.innerHTML = '<div class="text-center text-muted py-4">No ports found</div>';
+            return;
+        }
+
+        portsList.innerHTML = filteredPorts.slice(0, 20).map(port => {
+            const statusClass = port.status === 'operational' ? 'status-operational' : 
+                               (port.status === 'delayed' ? 'status-delayed' : 'status-critical');
+            return `
+                <div class="port-card">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-size: 18px; font-weight: 700; color: #1a1d2e;">${port.name}</div>
+                            <div style="font-size: 13px; color: #888; display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                                <i class="bi bi-geo-alt-fill"></i> ${port.country} • ${port.region}
+                            </div>
+                        </div>
+                        <span class="status-badge ${statusClass}">${port.status}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 12px 0; padding: 12px 0; border-top: 1px solid rgba(0,0,0,0.05); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                        <div style="text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #667eea;">${port.containers}</div><div style="font-size: 11px; color: #888; text-transform: uppercase; margin-top: 4px;">Containers</div></div>
+                        <div style="text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #667eea;">${port.ships}</div><div style="font-size: 11px; color: #888; text-transform: uppercase; margin-top: 4px;">Ships</div></div>
+                        <div style="text-align: center;"><div style="font-size: 20px; font-weight: 700; color: #667eea;">${port.congestion}%</div><div style="font-size: 11px; color: #888; text-transform: uppercase; margin-top: 4px;">Congestion</div></div>
+                    </div>
+                    <div style="font-size: 13px; color: #666; margin-top: 12px; padding: 12px; background: rgba(102,126,234,0.05); border-radius: 8px; border-left: 3px solid #667eea;">
+                        <i class="bi bi-info-circle me-1"></i> ${port.activity}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function addMarkersToMap(portsToDisplay) {
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
+
+        portsToDisplay.forEach(port => {
+            const color = port.status === 'operational' ? '#28a745' : (port.status === 'delayed' ? '#ffc107' : '#dc3545');
+            const marker = L.circleMarker([port.lat, port.lng], {
+                radius: 8,
+                fillColor: color,
+                color: '#fff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).bindPopup(`<strong>${port.name}</strong><br>${port.country}<br>Congestion: ${port.congestion}%`).addTo(map);
+            
+            markers.push(marker);
+        });
+    }
+
+    function updateCountryDropdown() {
+        const countrySelect = document.getElementById('countryFilter');
+        const countries = [...new Set(ports.map(p => p.country))].sort();
+        
+        const options = '<option value="">All Countries</option>' + 
+            countries.map(country => `<option value="${country}">${country}</option>`).join('');
+        
+        countrySelect.innerHTML = options;
+    }
+
+    function setupFilters() {
+        document.getElementById('countryFilter').addEventListener('change', applyFilters);
+        document.getElementById('regionFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchPort').addEventListener('input', applyFilters);
+        
+        document.getElementById('toggleRoutesBtn').addEventListener('click', function() {
+            shippingRoutesVisible = !shippingRoutesVisible;
+            this.innerHTML = shippingRoutesVisible ? 
+                '<i class="bi bi-diagram-3 me-1"></i>Hide Routes' : 
+                '<i class="bi bi-diagram-3 me-1"></i>Show Routes';
+            applyFilters();
+        });
+    }
+
+    function applyFilters() {
+        const country = document.getElementById('countryFilter').value;
+        const region = document.getElementById('regionFilter').value;
+        const search = document.getElementById('searchPort').value.toLowerCase();
+
+        const filtered = ports.filter(port => {
+            const matchCountry = !country || port.country === country;
+            const matchRegion = !region || port.region === region;
+            const matchSearch = !search || port.name.toLowerCase().includes(search);
+            
+            return matchCountry && matchRegion && matchSearch;
+        });
+
+        displayPorts(filtered);
+    }
+</script>
+</body>
+</html>

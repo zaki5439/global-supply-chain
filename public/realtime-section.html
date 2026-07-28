@@ -1,0 +1,260 @@
+<!-- REAL-TIME DATA SECTION - Modular Component -->
+<!-- Bisa digunakan standalone atau di-embed di dashboard -->
+
+<style>
+    .realtime-container {
+        background: linear-gradient(135deg, rgba(233, 69, 96, 0.1) 0%, rgba(83, 52, 131, 0.1) 100%);
+        border: 2px solid rgba(233, 69, 96, 0.3);
+        border-radius: 16px;
+        padding: 30px;
+        margin: 40px 0;
+        backdrop-filter: blur(10px);
+    }
+
+    .realtime-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(233, 69, 96, 0.5);
+    }
+
+    .realtime-header h2 {
+        margin: 0;
+        color: #1a1d2e;
+        font-weight: 800;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .realtime-icon {
+        color: #e94560;
+    }
+
+    .btn-refresh-live {
+        background: linear-gradient(135deg, #e94560 0%, #d63649 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+    }
+
+    .btn-refresh-live:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(233, 69, 96, 0.3);
+    }
+
+    .realtime-subtitle {
+        color: #666;
+        display: block;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+
+    .realtime-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .data-item {
+        background: white;
+        border-radius: 12px;
+        padding: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #667eea;
+        transition: all 0.3s;
+    }
+
+    .data-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .data-item.weather {
+        border-left-color: #667eea;
+    }
+
+    .data-item.exchange {
+        border-left-color: #28a745;
+    }
+
+    .data-item.ports {
+        border-left-color: #fd7e14;
+    }
+
+    .data-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #999;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .data-value {
+        font-size: 28px;
+        font-weight: 800;
+        margin: 8px 0;
+    }
+
+    .data-item.weather .data-value {
+        color: #667eea;
+    }
+
+    .data-item.exchange .data-value {
+        color: #28a745;
+    }
+
+    .data-item.ports .data-value {
+        color: #fd7e14;
+    }
+
+    .data-detail {
+        color: #666;
+        display: block;
+        line-height: 1.5;
+        font-size: 13px;
+    }
+
+    .data-timestamp {
+        font-size: 10px;
+        color: #ccc;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .realtime-container {
+            padding: 20px;
+        }
+
+        .realtime-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .realtime-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .data-value {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="realtime-container">
+    <div class="realtime-header">
+        <h2>
+            <i class="bi bi-broadcast realtime-icon"></i> Live Data Stream
+        </h2>
+        <button class="btn-refresh-live" onclick="refreshRealtimeData()">
+            <i class="bi bi-arrow-repeat"></i> Refresh
+        </button>
+    </div>
+    <span class="realtime-subtitle">✅ Auto-updates every 10 seconds | Real-time: Weather, Exchange Rates, Global Ports</span>
+    
+    <div class="realtime-grid">
+        <!-- Weather Berlin -->
+        <div class="data-item weather">
+            <div class="data-label">🌤️ Weather Berlin</div>
+            <div class="data-value" id="tempBerlin">--°C</div>
+            <small class="data-detail" id="weatherDetailBerlin">Humidity: -%, Wind: --</small>
+            <div class="data-timestamp" id="weatherUpdateBerlin">Updated: --</div>
+        </div>
+        
+        <!-- Weather Singapore -->
+        <div class="data-item weather">
+            <div class="data-label">🌴 Weather Singapore</div>
+            <div class="data-value" id="tempSingapore">--°C</div>
+            <small class="data-detail" id="weatherDetailSingapore">Humidity: -%, Wind: --</small>
+            <div class="data-timestamp" id="weatherUpdateSingapore">Updated: --</div>
+        </div>
+        
+        <!-- Exchange Rate EUR -->
+        <div class="data-item exchange">
+            <div class="data-label">💱 EUR/USD</div>
+            <div class="data-value" id="rateEUR">--</div>
+            <small class="data-detail" id="exchangeDetailEUR">1 USD = --</small>
+            <div class="data-timestamp" id="exchangeUpdateEUR">Updated: --</div>
+        </div>
+        
+        <!-- Exchange Rate SGD -->
+        <div class="data-item exchange">
+            <div class="data-label">💱 SGD/USD</div>
+            <div class="data-value" id="rateSGD">--</div>
+            <small class="data-detail" id="exchangeDetailSGD">1 USD = --</small>
+            <div class="data-timestamp" id="exchangeUpdateSGD">Updated: --</div>
+        </div>
+        
+        <!-- Ports Status -->
+        <div class="data-item ports">
+            <div class="data-label">⚓ Major Ports</div>
+            <div class="data-value">6/6</div>
+            <small class="data-detail">All Active & Operational</small>
+            <div class="data-timestamp">✓ Monitored</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function refreshRealtimeData() {
+        try {
+            const response = await fetch('api-real-time.php?type=all');
+            const allData = await response.json();
+            
+            const now = new Date().toLocaleTimeString();
+
+            // WEATHER DATA
+            if (allData.weather) {
+                const berlin = allData.weather.Berlin;
+                if (berlin && berlin.temperature !== undefined) {
+                    document.getElementById('tempBerlin').textContent = berlin.temperature.toFixed(1) + '°C';
+                    document.getElementById('weatherDetailBerlin').textContent = 
+                        `Humidity: ${berlin.humidity}% | Wind: ${berlin.wind_speed.toFixed(1)} km/h`;
+                    document.getElementById('weatherUpdateBerlin').textContent = `Updated: ${now}`;
+                }
+
+                const singapore = allData.weather.Singapore;
+                if (singapore && singapore.temperature !== undefined) {
+                    document.getElementById('tempSingapore').textContent = singapore.temperature.toFixed(1) + '°C';
+                    document.getElementById('weatherDetailSingapore').textContent = 
+                        `Humidity: ${singapore.humidity}% | Wind: ${singapore.wind_speed.toFixed(1)} km/h`;
+                    document.getElementById('weatherUpdateSingapore').textContent = `Updated: ${now}`;
+                }
+            }
+
+            // EXCHANGE RATES
+            if (allData.exchange && allData.exchange.rates) {
+                const rates = allData.exchange.rates;
+
+                if (rates.EUR) {
+                    document.getElementById('rateEUR').textContent = rates.EUR.toFixed(4);
+                    document.getElementById('exchangeDetailEUR').textContent = `1 USD = ${rates.EUR.toFixed(4)} EUR`;
+                    document.getElementById('exchangeUpdateEUR').textContent = `Updated: ${now}`;
+                }
+
+                if (rates.SGD) {
+                    document.getElementById('rateSGD').textContent = rates.SGD.toFixed(4);
+                    document.getElementById('exchangeDetailSGD').textContent = `1 USD = ${rates.SGD.toFixed(4)} SGD`;
+                    document.getElementById('exchangeUpdateSGD').textContent = `Updated: ${now}`;
+                }
+            }
+
+        } catch (error) {
+            console.error('Error fetching real-time data:', error);
+        }
+    }
+
+    // Auto-refresh every 10 seconds
+    refreshRealtimeData();
+    setInterval(refreshRealtimeData, 10000);
+</script>

@@ -1,0 +1,82 @@
+{
+    "Berlin": {
+        "temperature": 16.6,
+        "humidity": 65,
+        "wind_speed": 7.7,
+        "pressure": 1020.2,
+        "weather_code": 2,
+        "time": "2026-07-20T21:15"
+    },
+    "Singapore": {
+        "temperature": 23.8,
+        "humidity": 100,
+        "wind_speed": 1.8,
+        "pressure": 1011.8,
+        "weather_code": 3,
+        "time": "2026-07-20T21:15"
+    },
+    "Beijing": {
+        "temperature": 22.2,
+        "humidity": 95,
+        "wind_speed": 4.3,
+        "pressure": 1004.2,
+        "weather_code": 1,
+        "time": "2026-07-20T21:15"
+    },
+    "New York": {
+        "temperature": 27.4,
+        "humidity": 32,
+        "wind_speed": 13.7,
+        "pressure": 1014,
+        "weather_code": 0,
+        "time": "2026-07-20T21:15"
+    },
+    "Tokyo": {
+        "temperature": 24.7,
+        "humidity": 99,
+        "wind_speed": 1.1,
+        "pressure": 1009.1,
+        "weather_code": 3,
+        "time": "2026-07-20T21:15"
+    },
+    "Dubai": {
+        "temperature": 33.8,
+        "humidity": 42,
+        "wind_speed": 3.4,
+        "pressure": 996.6,
+        "weather_code": 3,
+        "time": "2026-07-20T21:15"
+    },
+    "London": {
+        "temperature": 20.1,
+        "humidity": 57,
+        "wind_speed": 13.3,
+        "pressure": 1027.5,
+        "weather_code": 2,
+        "time": "2026-07-20T21:15"
+    },
+    "Paris": {
+        "temperature": 19.9,
+        "humidity": 43,
+        "wind_speed": 12,
+        "pressure": 1024.4,
+        "weather_code": 0,
+        "time": "2026-07-20T21:15"
+    },
+    "Mumbai": {
+        "temperature": 25.9,
+        "humidity": 91,
+        "wind_speed": 11.5,
+        "pressure": 1006.2,
+        "weather_code": 81,
+        "time": "2026-07-20T21:15"
+    },
+    "Sydney": {
+        "temperature": 7.2,
+        "humidity": 96,
+        "wind_speed": 6.7,
+        "pressure": 1030.4,
+        "weather_code": 2,
+        "time": "2026-07-20T21:15"
+    }
+}
