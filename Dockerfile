@@ -45,9 +45,6 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install Node dependencies and build Vite assets
-RUN npm install && npm run build
-
 # Set proper permissions for Laravel
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache /app/public/build
 
