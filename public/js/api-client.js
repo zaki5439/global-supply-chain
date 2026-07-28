@@ -5,7 +5,7 @@
  */
 
 class APIClient {
-    constructor(baseURL = 'http://localhost:8000/api') {
+    constructor(baseURL = '/api') {
         this.baseURL = baseURL;
         this.cache = new Map();
         this.cacheTTL = 15 * 60 * 1000; // 15 minutes
