@@ -48,14 +48,14 @@ RUN rm -rf /var/www/html
 # Script to start services (Replaces ${PORT} in nginx config)
 RUN echo '#!/bin/bash\n\
 if [ -z "$PORT" ]; then\n\
-  export PORT=80\n\
+  export PORT=8080\n\
 fi\n\
 envsubst "\\$PORT" < /etc/nginx/sites-available/default > /tmp/nginx.conf && mv /tmp/nginx.conf /etc/nginx/sites-available/default\n\
 exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.conf\n\
 ' > /app/start.sh && chmod +x /app/start.sh
 
 # Expose default port
-ENV PORT=80
+ENV PORT=8080
 EXPOSE $PORT
 
 # Start everything via supervisord
